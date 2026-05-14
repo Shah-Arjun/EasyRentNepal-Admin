@@ -29,8 +29,8 @@ const adminLogin = async (req, res) => {
     res.cookie("adminToken", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      sameSite: "lax",
+      maxAge: 5 * 60 * 60 * 1000, // 5 hours
     });
 
     res.status(200).json({
@@ -48,20 +48,27 @@ const adminLogin = async (req, res) => {
   }
 };
 
+
+
+
+
 const adminLogout = async (req, res) => {
   res.clearCookie("adminToken", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: "lax",
   });
   res.status(200).json({ success: true, message: "Logged out successfully" });
 };
+
+
+
 
 const checkAuth = async (req, res) => {
   try {
     const admin = await Admin.findById(req.admin.id);
     if (!admin) {
-      return res.status(404).json({ message: "Admin not found" });
+      return res.status(404).json({ success: false, message: "Admin not found" });
     }
     res.status(200).json({
       success: true,

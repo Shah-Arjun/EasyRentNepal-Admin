@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { adminLogin, adminLogout, checkAuth } = require("../controller/authController");
 const { getDashboardStats } = require("../controller/statsController");
-const { getAllProperties, toggleFeatured, getPropertyDetails } = require("../controller/adminPropertyController");
+const { getAllProperties, toggleFeatured, getPropertyDetails, deleteProperty } = require("../controller/adminPropertyController");
 const { getAllUsers, getUserDetails } = require("../controller/adminUserController");
 const { isAdmin } = require("../middleware/authMiddleware");
 
@@ -19,6 +19,7 @@ router.get("/stats", getDashboardStats);
 router.get("/properties", getAllProperties);
 router.get("/properties/:id", getPropertyDetails);
 router.patch("/properties/:id/toggle-featured", toggleFeatured);
+router.delete("/properties/:id", deleteProperty);
 
 router.get("/users", getAllUsers);
 router.get("/users/:id", getUserDetails);

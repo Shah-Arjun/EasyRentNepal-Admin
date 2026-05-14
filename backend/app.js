@@ -4,6 +4,19 @@ const app = express();
 const connectMongoDB = require("./database/db")
 const cookieParser = require('cookie-parser');
 require('dotenv').config(); 
+
+// 1. Register ALL models FIRST to prevent MissingSchemaError during population
+require("./models/adminModel");
+require("./models/userModel");
+require("./models/propertyModel");
+require("./models/agencyModel");
+require("./models/bookingModel");
+require("./models/paymentModel");
+require("./models/reviewModel");
+require("./models/wishlistModel");
+require("./models/userActivityModel");
+
+// 2. Load controllers/routes AFTER models are registered
 const adminSeeder = require("./adminSeeder");
 const adminRoutes = require("./routes/adminRoutes");
 
