@@ -1,1 +1,1 @@
-# EasyRentNepal-Admin
+# EasyRentNepal-Admin-Dashboard
