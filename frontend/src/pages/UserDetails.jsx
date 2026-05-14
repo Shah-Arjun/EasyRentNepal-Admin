@@ -23,7 +23,9 @@ const UserDetails = () => {
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:5000/api/admin/users/${id}`);
+        const { data } = await axios.get(`http://localhost:5000/api/admin/users/${id}`, {
+          withCredentials: true
+        });
         if (data.success) {
           setUserData(data);
         }

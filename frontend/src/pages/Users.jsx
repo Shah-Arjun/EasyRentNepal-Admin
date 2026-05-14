@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { 
   Search, 
@@ -7,7 +7,8 @@ import {
   Mail, 
   Calendar, 
   Eye,
-  Home
+  Home,
+  Loader2
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -18,28 +19,33 @@ const Users = () => {
   const [search, setSearch] = useState("");
   const [role, setRole] = useState("");
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
+      const params = {};
+      if (search.trim()) params.search = search.trim();
+      if (role) params.role = role;
+
       const { data } = await axios.get(`http://localhost:5000/api/admin/users`, {
-        params: { search, role }
+        params,
+        withCredentials: true
       });
       if (data.success) {
         setUsers(data.users);
       }
     } catch (error) {
       console.error("Error fetching users:", error);
-      toast.error("Failed to load users");
+      toast.error(error.response?.data?.message || "Failed to load users");
     } finally {
       setLoading(false);
     }
-  };
+  }, [role]); // search triggered on submit
 
   useEffect(() => {
     fetchUsers();
-  }, [role]);
+  }, [fetchUsers]);
 
-  const handleSearch = (e) => {
+  const handleSearchSubmit = (e) => {
     e.preventDefault();
     fetchUsers();
   };
@@ -48,11 +54,11 @@ const Users = () => {
     <div className="users-page fade-in">
       <div className="page-header">
         <h1>User Management</h1>
-        <p>Manage and monitor system users</p>
+        <p>Manage and monitor all registered tenants and owners</p>
       </div>
 
       <div className="filters-card card">
-        <form onSubmit={handleSearch} className="filters-grid">
+        <form onSubmit={handleSearchSubmit} className="filters-grid">
           <div className="search-box">
             <Search className="icon" size={18} />
             <input 
@@ -67,12 +73,14 @@ const Users = () => {
             <Filter className="icon" size={18} />
             <select value={role} onChange={(e) => setRole(e.target.value)}>
               <option value="">All Roles</option>
-              <option value="tenant">Tenant</option>
-              <option value="owner">Owner</option>
+              <option value="tenant">Tenant Only</option>
+              <option value="owner">Owner Only</option>
             </select>
           </div>
 
-          <button type="submit" className="btn btn-primary">Apply Filters</button>
+          <button type="submit" className="btn btn-primary" disabled={loading}>
+            {loading ? <Loader2 className="animate-spin" size={18} /> : "Apply"}
+          </button>
         </form>
       </div>
 
@@ -80,20 +88,23 @@ const Users = () => {
         <table>
           <thead>
             <tr>
-              <th>User</th>
-              <th>Contact</th>
-              <th>Roles</th>
-              <th>Properties</th>
-              <th>Verified</th>
+              <th>User Identity</th>
+              <th>Contact Details</th>
+              <th>System Roles</th>
+              <th>Listed</th>
+              <th>Status</th>
               <th>Joined Date</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {loading ? (
-              <tr><td colSpan="7" style={{ textAlign: 'center', padding: '2rem' }}>Loading...</td></tr>
+            {loading && users.length === 0 ? (
+              <tr><td colSpan="7" style={{ textAlign: 'center', padding: '3rem' }}>
+                <Loader2 className="animate-spin mx-auto" size={32} />
+                <p className="mt-2 text-muted">Loading users...</p>
+              </td></tr>
             ) : users.length === 0 ? (
-              <tr><td colSpan="7" style={{ textAlign: 'center', padding: '2rem' }}>No users found</td></tr>
+              <tr><td colSpan="7" style={{ textAlign: 'center', padding: '3rem' }}>No users found</td></tr>
             ) : (
               users.map((user) => (
                 <tr key={user._id}>
@@ -123,12 +134,12 @@ const Users = () => {
                   </td>
                   <td>
                     <div className="prop-count">
-                      <Home size={14} /> {user.propertyCount} listed
+                      <Home size={14} /> {user.propertyCount} properties
                     </div>
                   </td>
                   <td>
                     <span className={`badge badge-${user.isOtpVerified ? 'success' : 'warning'}`}>
-                      {user.isOtpVerified ? 'Verified' : 'Pending'}
+                      {user.isOtpVerified ? 'Verified' : 'Unverified'}
                     </span>
                   </td>
                   <td>
@@ -140,7 +151,7 @@ const Users = () => {
                   <td>
                     <Link to={`/users/${user._id}`} className="btn btn-outline btn-sm">
                       <Eye size={16} />
-                      View Profile
+                      View
                     </Link>
                   </td>
                 </tr>
@@ -151,39 +162,28 @@ const Users = () => {
       </div>
 
       <style>{`
-        .filters-card {
-          margin-bottom: 1.5rem;
-        }
+        .animate-spin { animation: spin 1s linear infinite; }
+        .mx-auto { margin-left: auto; margin-right: auto; }
+        .mt-2 { margin-top: 0.5rem; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .filters-card { margin-bottom: 1.5rem; }
         .filters-grid {
           display: grid;
           grid-template-columns: 2fr 1fr auto;
           gap: 1rem;
           align-items: center;
         }
-        .search-box, .select-box {
-          position: relative;
-          display: flex;
-          align-items: center;
-        }
-        .search-box .icon, .select-box .icon {
-          position: absolute;
-          left: 12px;
-          color: var(--text-muted);
-          pointer-events: none;
-        }
+        .search-box, .select-box { position: relative; display: flex; align-items: center; }
+        .search-box .icon, .select-box .icon { position: absolute; left: 12px; color: var(--text-muted); pointer-events: none; }
         .search-box input, .select-box select {
           width: 100%;
           padding: 0.625rem 1rem 0.625rem 2.5rem;
           border: 1px solid var(--border);
           border-radius: var(--radius);
           outline: none;
-          background: #f8fafc;
+          background: #fff;
         }
-        .user-cell {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-        }
+        .user-cell { display: flex; align-items: center; gap: 0.75rem; }
         .avatar {
           width: 36px;
           height: 36px;
@@ -194,34 +194,12 @@ const Users = () => {
           justify-content: center;
           color: #64748b;
         }
-        .user-name {
-          font-weight: 600;
-          color: var(--text-main);
-        }
-        .user-id {
-          font-size: 0.75rem;
-          color: var(--text-muted);
-        }
-        .contact-cell {
-          font-size: 0.875rem;
-        }
-        .contact-cell .email, .contact-cell .phone {
-          display: flex;
-          align-items: center;
-          gap: 0.4rem;
-          color: var(--text-muted);
-        }
-        .prop-count {
-          display: flex;
-          align-items: center;
-          gap: 0.4rem;
-          font-weight: 500;
-        }
-        .roles-cell {
-          display: flex;
-          gap: 0.4rem;
-          flex-wrap: wrap;
-        }
+        .user-name { font-weight: 600; color: var(--text-main); }
+        .user-id { font-size: 0.75rem; color: var(--text-muted); }
+        .contact-cell { font-size: 0.875rem; }
+        .contact-cell .email, .contact-cell .phone { display: flex; align-items: center; gap: 0.4rem; color: var(--text-muted); }
+        .prop-count { display: flex; align-items: center; gap: 0.4rem; font-weight: 500; }
+        .roles-cell { display: flex; gap: 0.4rem; flex-wrap: wrap; }
       `}</style>
     </div>
   );
