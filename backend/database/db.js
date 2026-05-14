@@ -13,7 +13,7 @@ const connectMongoDB = async () => {
   }
 
   //admin seeding function goes here--runs if connection is success
-  adminSeeder()
+  // adminSeeder()
 
 };
 
