@@ -205,6 +205,7 @@ const Properties = () => {
                       <Link to={`/users/${property.owner?._id}`} className="owner-link">
                         {property.owner?.name || "N/A"}
                       </Link>
+                      <p>{property.owner?.contact || "N/A"}</p>
                     </td>
                     <td className="hide-mobile">
                       <div className="location-cell">
