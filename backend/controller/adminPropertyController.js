@@ -29,7 +29,7 @@ const getAllProperties = async (req, res) => {
     console.log("Fetching properties with query:", JSON.stringify(query));
 
     const properties = await Property.find(query)
-      .populate("owner", "name email")
+      .populate("owner")
       .sort({ createdAt: -1 })
       .lean(); // Use lean() for faster processing and to allow easy modification
 

@@ -106,14 +106,6 @@ const Dashboard = () => {
         ))}
       </div>
 
-      <div className="dashboard-content">
-        {/* Placeholder for charts or recent activity */}
-        <div className="card welcome-card">
-          <h2>Welcome to EasyRent Nepal Admin</h2>
-          <p>You can manage all properties, users, and bookings from this central dashboard. Use the sidebar to navigate through different sections.</p>
-        </div>
-      </div>
-
       <style>{`
         .page-header {
           margin-bottom: 2rem;
