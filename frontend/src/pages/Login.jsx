@@ -59,7 +59,7 @@ const Login = () => {
           </div>
 
           <button type="submit" className="login-btn" disabled={isLoading}>
-            {isLoading ? "Logging in..." : "Access Dashboard"}
+            {isLoading ? "Logging in..." : "Login"}
             {!isLoading && <ArrowRight size={20} />}
           </button>
         </form>
