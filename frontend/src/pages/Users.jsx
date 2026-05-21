@@ -26,7 +26,7 @@ const Users = () => {
       if (search.trim()) params.search = search.trim();
       if (role) params.role = role;
 
-      const { data } = await axios.get(`http://localhost:5000/api/admin/users`, {
+      const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/admin/users`, {
         params,
         withCredentials: true
       });

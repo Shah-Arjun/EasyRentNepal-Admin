@@ -26,7 +26,7 @@ const PropertyDetails = () => {
       try {
         setLoading(true);
         setError(null);
-        const { data } = await axios.get(`http://localhost:5000/api/admin/properties/${id}`, {
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/admin/properties/${id}`, {
           withCredentials: true
         });
         if (data.success) {

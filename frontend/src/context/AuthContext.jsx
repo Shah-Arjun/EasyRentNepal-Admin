@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [admin, setAdmin] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const API_URL = "http://localhost:5000/api/admin";
+  const API_URL = import.meta.env.VITE_API_URL + "/admin";
   axios.defaults.withCredentials = true;
 
   const checkAuth = async () => {
