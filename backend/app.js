@@ -26,10 +26,13 @@ app.use(cors({
     "http://localhost:5173",
     "http://localhost:5174",
     "http://localhost:5175",
+    "https://admin-easy-rent-nepal.vercel.app/",
     process.env.FRONTEND_URL
-  ].filter(Boolean),
+  ],
   credentials: true
 }))
+
+
 app.use(express.json({ limit: '100mb' }))
 app.use(express.urlencoded({ extended: true, limit: '100mb' }))
 app.use(cookieParser());
