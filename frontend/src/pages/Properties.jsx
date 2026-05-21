@@ -38,7 +38,7 @@ const Properties = () => {
       if (featured) params.featured = featured;
       if (embedding) params.embedding = embedding;
 
-      const { data } = await axios.get(`http://localhost:5000/api/admin/properties`, {
+      const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/admin/properties`, {
         params,
         withCredentials: true
       });
@@ -69,7 +69,7 @@ const Properties = () => {
 
   const toggleFeatured = async (id) => {
     try {
-      const { data } = await axios.patch(`http://localhost:5000/api/admin/properties/${id}/toggle-featured`, {}, {
+      const { data } = await axios.patch(`${import.meta.env.VITE_API_URL}/admin/properties/${id}/toggle-featured`, {}, {
         withCredentials: true
       });
       if (data.success) {
@@ -84,7 +84,7 @@ const Properties = () => {
   const handleDelete = async (id, title) => {
     if (window.confirm(`Are you sure you want to delete "${title}"? This action cannot be undone.`)) {
       try {
-        const { data } = await axios.delete(`http://localhost:5000/api/admin/properties/${id}`, {
+        const { data } = await axios.delete(`${import.meta.env.VITE_API_URL}/admin/properties/${id}`, {
           withCredentials: true
         });
         if (data.success) {

@@ -23,7 +23,7 @@ const UserDetails = () => {
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:5000/api/admin/users/${id}`, {
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/admin/users/${id}`, {
           withCredentials: true
         });
         if (data.success) {
